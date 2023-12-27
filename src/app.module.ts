@@ -8,7 +8,7 @@ import { AuthModule } from "./auth/auth.module";
 @Module({
   imports: [
     MongooseModule.forRoot(
-      "mongodb+srv://jrmhbusiness:zcAKlW2tEnv114D6@cluster0.x92oudk.mongodb.net/INFINITELINKS_DEV?retryWrites=true"
+      "***"
     ),
     UsersModule,
     AuthModule,
