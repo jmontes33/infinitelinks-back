@@ -13,6 +13,7 @@ const auth_service_1 = require("./auth.service");
 const users_module_1 = require("../users/users.module");
 const jwt_1 = require("@nestjs/jwt");
 const constants_1 = require("./constants");
+const links_module_1 = require("../links/links.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -22,10 +23,11 @@ exports.AuthModule = AuthModule = __decorate([
         providers: [auth_service_1.AuthService],
         imports: [
             users_module_1.UsersModule,
+            links_module_1.LinksModule,
             jwt_1.JwtModule.register({
                 global: true,
                 secret: constants_1.jwtConstants.secret,
-                signOptions: { expiresIn: "60s" },
+                signOptions: { expiresIn: "3600s" },
             }),
         ],
     })

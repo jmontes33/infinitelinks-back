@@ -1,46 +1,73 @@
-import { Injectable } from "@nestjs/common";
-import * as bcrypt from "bcrypt";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { User } from "./user.schema";
-import { createUserDto } from "./dto/createUserDto";
+import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Repository } from 'typeorm';
+import { Users } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import validator from 'validator';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectRepository(Users) private readonly userRepository: Repository<Users>
+  ) {}
 
-  async create(createUser: createUserDto) {
-    const existingUser = await this.userModel
-      .findOne({
-        username: createUser.username,
-      })
-      .exec();
+  async createUser(createUserDto: CreateUserDto): Promise<Users> {
+    const user: Users = new Users();
+
+    const existingUser = await this.userRepository.findOne({
+      where: { username: createUserDto.username },
+    });
+
+    const existingEmail = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
+
     if (existingUser) {
-      throw new Error("User with the same username already exists");
+      throw new Error('User already exists');
     }
 
-    const { username, password, email } = createUser;
+    if (existingEmail) {
+      throw new Error('User with the same email already exists');
+    }
+
+    const isValidPassword = validator.isStrongPassword(createUserDto.password);
+
+    if (!isValidPassword) {
+      throw new Error('Password must be strong');
+    }
+
+    const { username, password, email } = createUserDto;
 
     if (!username || !password || !email) {
-      throw new Error("Invalid createUserDto");
+      throw new Error('Invalid createUserDto');
     }
 
-    const hashedPassword = await bcrypt.hash(createUser.password, 10);
-
-    const newUser = new this.userModel({
-      ...createUser,
-      password: hashedPassword,
-    });
-    return newUser.save();
+    user.username = createUserDto.username;
+    user.email = createUserDto.email;
+    user.password = await bcrypt.hash(createUserDto.password, 10);
+    return this.userRepository.save(user);
   }
 
-  async findOne(username: string): Promise<User | undefined> {
-    const user = await this.userModel
-      .findOne({ username: username })
-      .select("password")
-      .lean()
-      .exec();
+  findAllUser(): Promise<Users[]> {
+    return this.userRepository.find();
+  }
 
-    return user;
+  findOneUser(username: string): Promise<Users> {
+    return this.userRepository.findOneBy({ username });
+  }
+
+  updateUser(id: number, updateUserDto: UpdateUserDto): Promise<Users> {
+    const user: Users = new Users();
+    user.username = updateUserDto.username;
+    user.email = updateUserDto.email;
+    user.password = updateUserDto.password;
+    user.id = id;
+    return this.userRepository.save(user);
+  }
+
+  removeUser(id: number): Promise<{ affected?: number }> {
+    return this.userRepository.delete(id);
   }
 }

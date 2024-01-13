@@ -27,7 +27,7 @@ let AuthGuard = class AuthGuard {
             const payload = await this.jwtService.verifyAsync(token, {
                 secret: constants_1.jwtConstants.secret,
             });
-            request['user'] = payload;
+            request["user"] = payload;
         }
         catch {
             throw new common_1.UnauthorizedException();
@@ -35,8 +35,8 @@ let AuthGuard = class AuthGuard {
         return true;
     }
     extractTokenFromHeader(request) {
-        const [type, token] = request.headers.authorization?.split(' ') ?? [];
-        return type === 'Bearer' ? token : undefined;
+        const [type, token] = request.headers.authorization?.split(" ") ?? [];
+        return type === "Bearer" ? token : undefined;
     }
 };
 exports.AuthGuard = AuthGuard;

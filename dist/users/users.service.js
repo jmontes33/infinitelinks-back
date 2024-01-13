@@ -14,47 +14,64 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("typeorm");
+const user_entity_1 = require("./entities/user.entity");
+const typeorm_2 = require("@nestjs/typeorm");
 const bcrypt = require("bcrypt");
-const mongoose_1 = require("@nestjs/mongoose");
-const mongoose_2 = require("mongoose");
-const user_schema_1 = require("./user.schema");
+const validator_1 = require("validator");
 let UsersService = class UsersService {
-    constructor(userModel) {
-        this.userModel = userModel;
+    constructor(userRepository) {
+        this.userRepository = userRepository;
     }
-    async create(createUser) {
-        const existingUser = await this.userModel
-            .findOne({
-            username: createUser.username,
-        })
-            .exec();
-        if (existingUser) {
-            throw new Error("User with the same username already exists");
-        }
-        const { username, password, email } = createUser;
-        if (!username || !password || !email) {
-            throw new Error("Invalid createUserDto");
-        }
-        const hashedPassword = await bcrypt.hash(createUser.password, 10);
-        const newUser = new this.userModel({
-            ...createUser,
-            password: hashedPassword,
+    async createUser(createUserDto) {
+        const user = new user_entity_1.Users();
+        const existingUser = await this.userRepository.findOne({
+            where: { username: createUserDto.username },
         });
-        return newUser.save();
+        const existingEmail = await this.userRepository.findOne({
+            where: { email: createUserDto.email },
+        });
+        if (existingUser) {
+            throw new Error('User already exists');
+        }
+        if (existingEmail) {
+            throw new Error('User with the same email already exists');
+        }
+        const isValidPassword = validator_1.default.isStrongPassword(createUserDto.password);
+        if (!isValidPassword) {
+            throw new Error('Password must be strong');
+        }
+        const { username, password, email } = createUserDto;
+        if (!username || !password || !email) {
+            throw new Error('Invalid createUserDto');
+        }
+        user.username = createUserDto.username;
+        user.email = createUserDto.email;
+        user.password = await bcrypt.hash(createUserDto.password, 10);
+        return this.userRepository.save(user);
     }
-    async findOne(username) {
-        const user = await this.userModel
-            .findOne({ username: username })
-            .select("password")
-            .lean()
-            .exec();
-        return user;
+    findAllUser() {
+        return this.userRepository.find();
+    }
+    findOneUser(username) {
+        return this.userRepository.findOneBy({ username });
+    }
+    updateUser(id, updateUserDto) {
+        const user = new user_entity_1.Users();
+        user.username = updateUserDto.username;
+        user.email = updateUserDto.email;
+        user.password = updateUserDto.password;
+        user.id = id;
+        return this.userRepository.save(user);
+    }
+    removeUser(id) {
+        return this.userRepository.delete(id);
     }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(0, (0, typeorm_2.InjectRepository)(user_entity_1.Users)),
+    __metadata("design:paramtypes", [typeorm_1.Repository])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map
