@@ -51,7 +51,7 @@ let LinksService = class LinksService {
             data.username = createLinkDto.username;
             data.shortId = shortUrlToUse;
             data.originalUrl = createLinkDto.originalUrl;
-            data.shortUrl = `${base}${shortUrlToUse}`;
+            data.shortUrl = `${base}/${shortUrlToUse}`;
             data.clicks = 0;
             data.state = 'Active';
             return this.linkRepository.save(data);
