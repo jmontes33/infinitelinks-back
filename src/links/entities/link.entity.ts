@@ -6,9 +6,6 @@ export class Link {
   id: string;
 
   @Column({ type: 'varchar' })
-  username: string;
-
-  @Column({ type: 'varchar' })
   shortId: string;
 
   @Column({ type: 'varchar' })
@@ -16,10 +13,4 @@ export class Link {
 
   @Column({ type: 'varchar' })
   shortUrl: string;
-
-  @Column({ type: 'integer' })
-  clicks: number;
-
-  @Column({ type: 'varchar' })
-  state: string;
 }

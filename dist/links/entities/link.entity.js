@@ -21,10 +21,6 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar' }),
     __metadata("design:type", String)
-], Link.prototype, "username", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'varchar' }),
-    __metadata("design:type", String)
 ], Link.prototype, "shortId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar' }),
@@ -34,14 +30,6 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar' }),
     __metadata("design:type", String)
 ], Link.prototype, "shortUrl", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'integer' }),
-    __metadata("design:type", Number)
-], Link.prototype, "clicks", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'varchar' }),
-    __metadata("design:type", String)
-], Link.prototype, "state", void 0);
 exports.Link = Link = __decorate([
     (0, typeorm_1.Entity)()
 ], Link);

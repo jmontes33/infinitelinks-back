@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { UsersModule } from "src/users/users.module";
 import { JwtModule } from "@nestjs/jwt";
 import { jwtConstants } from "./constants";
 import { LinksModule } from "src/links/links.module";
@@ -10,7 +9,6 @@ import { LinksModule } from "src/links/links.module";
   controllers: [AuthController],
   providers: [AuthService],
   imports: [
-    UsersModule,
     LinksModule,
     JwtModule.register({
       global: true,

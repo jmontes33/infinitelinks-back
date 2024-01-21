@@ -23,7 +23,6 @@ let LinksController = class LinksController {
         try {
             const url = await this.linksService.findOne(shortId);
             if (url) {
-                await this.linksService.updateClicks(shortId);
                 return res.redirect(url.originalUrl);
             }
             else {

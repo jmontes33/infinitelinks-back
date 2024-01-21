@@ -12,8 +12,6 @@ const typeorm_1 = require("@nestjs/typeorm");
 const app_service_1 = require("./app.service");
 const app_controller_1 = require("./app.controller");
 const config_1 = require("@nestjs/config");
-const users_module_1 = require("./users/users.module");
-const user_entity_1 = require("./users/entities/user.entity");
 const auth_module_1 = require("./auth/auth.module");
 const links_module_1 = require("./links/links.module");
 const link_entity_1 = require("./links/entities/link.entity");
@@ -37,14 +35,13 @@ exports.AppModule = AppModule = __decorate([
                         username: configService.get('POSTGRES_USER'),
                         password: configService.get('POSTGRES_PASSWORD'),
                         database: configService.get('POSTGRES_DB'),
-                        entities: [user_entity_1.Users, link_entity_1.Link],
+                        entities: [link_entity_1.Link],
                         synchronize: true,
                         logging: true,
                     };
                 },
                 inject: [config_1.ConfigService],
             }),
-            users_module_1.UsersModule,
             auth_module_1.AuthModule,
             links_module_1.LinksModule,
         ],

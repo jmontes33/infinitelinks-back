@@ -9,5 +9,4 @@ export declare class LinksService {
     create(createLinkDto: CreateLinkDto): Promise<Link>;
     findOne(shortId: string): Promise<Link>;
     updateClicks(shortId: string): Promise<void>;
-    findAllByUsername(username: string): Promise<Link[]>;
 }

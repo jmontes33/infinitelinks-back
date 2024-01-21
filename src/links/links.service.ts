@@ -45,12 +45,9 @@ export class LinksService {
 
       const base = this.configService.get<string>('BASE_URL');
 
-      data.username = createLinkDto.username;
       data.shortId = shortUrlToUse;
       data.originalUrl = createLinkDto.originalUrl;
       data.shortUrl = `${base}/${shortUrlToUse}`;
-      data.clicks = 0;
-      data.state = 'Active';
 
       return this.linkRepository.save(data);
     } catch (error) {
@@ -66,12 +63,7 @@ export class LinksService {
     await this.linkRepository
       .createQueryBuilder()
       .update(Link)
-      .set({ clicks: () => 'clicks + 1' })
       .where('shortId = :shortId', { shortId })
       .execute();
-  }
-
-  async findAllByUsername(username: string) {
-    return this.linkRepository.find({ where: { username } });
   }
 }
